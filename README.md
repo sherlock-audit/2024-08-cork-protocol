@@ -8,34 +8,3 @@
 # Q&A
 
 # Audit scope
-
-
-[Depeg-swap @ 75b31a6f607e164e0a1f9f9243a3a6326c24e314](https://github.com/Cork-Technology/Depeg-swap/tree/75b31a6f607e164e0a1f9f9243a3a6326c24e314)
-- [Depeg-swap/contracts/core/CorkConfig.sol](Depeg-swap/contracts/core/CorkConfig.sol)
-- [Depeg-swap/contracts/core/ModuleCore.sol](Depeg-swap/contracts/core/ModuleCore.sol)
-- [Depeg-swap/contracts/core/ModuleState.sol](Depeg-swap/contracts/core/ModuleState.sol)
-- [Depeg-swap/contracts/core/Psm.sol](Depeg-swap/contracts/core/Psm.sol)
-- [Depeg-swap/contracts/core/Vault.sol](Depeg-swap/contracts/core/Vault.sol)
-- [Depeg-swap/contracts/core/assets/Asset.sol](Depeg-swap/contracts/core/assets/Asset.sol)
-- [Depeg-swap/contracts/core/assets/AssetFactory.sol](Depeg-swap/contracts/core/assets/AssetFactory.sol)
-- [Depeg-swap/contracts/core/flash-swaps/FlashSwapRouter.sol](Depeg-swap/contracts/core/flash-swaps/FlashSwapRouter.sol)
-- [Depeg-swap/contracts/libraries/DepegSwapLib.sol](Depeg-swap/contracts/libraries/DepegSwapLib.sol)
-- [Depeg-swap/contracts/libraries/DsFlashSwap.sol](Depeg-swap/contracts/libraries/DsFlashSwap.sol)
-- [Depeg-swap/contracts/libraries/DsSwapperMathLib.sol](Depeg-swap/contracts/libraries/DsSwapperMathLib.sol)
-- [Depeg-swap/contracts/libraries/Guard.sol](Depeg-swap/contracts/libraries/Guard.sol)
-- [Depeg-swap/contracts/libraries/LvAssetLib.sol](Depeg-swap/contracts/libraries/LvAssetLib.sol)
-- [Depeg-swap/contracts/libraries/MathHelper.sol](Depeg-swap/contracts/libraries/MathHelper.sol)
-- [Depeg-swap/contracts/libraries/MutexLock.sol](Depeg-swap/contracts/libraries/MutexLock.sol)
-- [Depeg-swap/contracts/libraries/Pair.sol](Depeg-swap/contracts/libraries/Pair.sol)
-- [Depeg-swap/contracts/libraries/PeggedAssetLib.sol](Depeg-swap/contracts/libraries/PeggedAssetLib.sol)
-- [Depeg-swap/contracts/libraries/PermitChecker.sol](Depeg-swap/contracts/libraries/PermitChecker.sol)
-- [Depeg-swap/contracts/libraries/PsmLib.sol](Depeg-swap/contracts/libraries/PsmLib.sol)
-- [Depeg-swap/contracts/libraries/RedemptionAssetManagerLib.sol](Depeg-swap/contracts/libraries/RedemptionAssetManagerLib.sol)
-- [Depeg-swap/contracts/libraries/SignatureHelperLib.sol](Depeg-swap/contracts/libraries/SignatureHelperLib.sol)
-- [Depeg-swap/contracts/libraries/State.sol](Depeg-swap/contracts/libraries/State.sol)
-- [Depeg-swap/contracts/libraries/UQ112x112.sol](Depeg-swap/contracts/libraries/UQ112x112.sol)
-- [Depeg-swap/contracts/libraries/VaultConfig.sol](Depeg-swap/contracts/libraries/VaultConfig.sol)
-- [Depeg-swap/contracts/libraries/VaultLib.sol](Depeg-swap/contracts/libraries/VaultLib.sol)
-- [Depeg-swap/contracts/libraries/VaultPoolLib.sol](Depeg-swap/contracts/libraries/VaultPoolLib.sol)
-
-
