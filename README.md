@@ -56,7 +56,7 @@ Design decisions are discussed in the litepaper: https://corkfi.notion.site/Depe
 ___
 
 ### Q: Please list any known issues and explicitly state the acceptable risks for each known issue.
-Admin will be multisig contract and every multisig transaction from admin multisig will be reviewed by trusted team members, so here we can  assume that multisig owner contract will act maliciously 
+Admin will be multisig contract and every multisig transaction from admin multisig will be reviewed by trusted team members, so here we can  assume that multisig owner contract will not act maliciously 
 ___
 
 ### Q: We will report issues where the core protocol functionality is inaccessible for at least 7 days. Would you like to override this value?
