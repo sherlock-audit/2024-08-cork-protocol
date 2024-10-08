@@ -471,6 +471,7 @@ describe("Module Core", function () {
         true,
         true,
         true,
+        true,
       ]);
       const events = await moduleCore.getEvents.PoolsStatusUpdated({
         Id: fixture.Id,
