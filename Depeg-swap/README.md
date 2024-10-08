@@ -3,9 +3,20 @@
 This repository contains core smart contracts of Depeg Swaps, for higher level specification and flows please see the design [documents](https://corkfi.notion.site/Smart-Contract-Flow-fc170aec36bc43579a7d0429c49e08ab) for now.
 
 # Build
-Install required dependencies :
+
+Install required dependencies :(related to hardhat)
+
 ```bash
 yarn
+```
+
+Install required dependencies :(related to foundry)
+
+```bash
+forge install Openzeppelin/openzeppelin-contracts@v5.0.2
+forge install Openzeppelin/openzeppelin-contracts-upgradeable@v5.0.2
+forge install Cork-Technology/v2-core@v1.0.2
+forge install Cork-Technology/v2-periphery@v1.0.1
 ```
 
 To build & compile all contracts simply run :
@@ -41,21 +52,50 @@ IgnitionError: IGN403: You have sent transactions from 0x3e995c17172ea3e23505adf
 This is because we actualy don't use ignition when deploying uniswap v2 related contracts(e.g factory, router). Instead, we use ethers due to the fact that for some reason, deploying using ignition modules won't work with uniswap v2 contracts. To resolve this, simply run the command again. This usually takes 1-2 times, but don't worry, all of the previous deployments will be cached
 
 ```bash
-npx hardhat run scripts/deploy.ts --network <network>
+npx hardhat run script/hardhat-scripts/deploy.ts --network <network>
+
+forge script script/foundry-scripts/Deploy.s.sol:DeployScript --rpc-url https://1rpc.io/sepolia --broadcast -vvv --with-gas-price 25000000000
 ```
 
 AFter that, you should see something like this on your terminal :
 
 ```bash
-PRODUCTION                   : undefined
-Network                      : sepolia
-Chain Id                     : 11155111
-Deployer                     : 0x3e995c17172ea3e23505adfe5630df395a738e51
-
-AssetFactory deployed to     : 0xD5A39C05d6f5bffD7501287f975cE53c483FDA4C
-CorkConfig deployed to       : 0x6B0636aaa7dB7D8bD05fFE147AF8CD295b2677c4
-FlashSwapRouter deployed to  : 0x071a4F363AAC0948BA92bb1af698Bf09B89E8Fc6
-UniV2Factory deployed to     : 0xc309a6A25B96D6aC843148ABF8100054c8644c38
-UniV2Router deployed to      : 0x7f4e645054966556983B21a5Fe5eE6A17C21171a
-ModuleCore deployed to       : 0xB2643D4b7Ee4aeb9f03CD0C18B971A141eC07f37
+  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  PRODUCTION                   : undefined
+  Network                      : sepolia
+  Chain Id                     : 11155111
+  Deployer                     : 0xFFB6b6896D469798cE64136fd3129979411B5514
+ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  CETH                            :  0x93D16d90490d812ca6fBFD29E8eF3B31495d257D
+  bsETH                           :  0xb194fc7C6ab86dCF5D96CF8525576245d0459ea9
+  lbETH                           :  0xF24177162B1604e56EB338dd9775d75CC79DaC2B
+  wamuETH                         :  0x38B61B429a3526cC6C446400DbfcA4c1ae61F11B
+  mlETH                           :  0xCDc1133148121F43bE5F1CfB3a6426BbC01a9AF6
+  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  Asset Factory Implementation    :  0x92D8b534237C5Be34753b975D53a14b494b96Ef4
+  Asset Factory                   :  0xbdfc069558B9d87Df40f9A4876Fa7c52f6492788
+  Cork Config                     :  0x8c996E7f76fB033cDb83CE1de7c3A134e17Cc227
+  Flashswap Router Implementation :  0xE6F58Dd84869542d7Ec1c0153417E20Fa220B63d
+  Flashswap Router Proxy          :  0x6629e017455CB886669e725AF1BC826b65cB6f24
+  Univ2 Factory                   :  0x8fD48F4ec9cB04540134c02f4dAa5f68585c3936
+  Univ2 Router                    :  0x363E8886E8FF30b6f6770712Cf4e758e2Bf3E353
+  ModuleCore Router Implementation :  0x26De252a30812645960846cEA402E4B34A8eaD89
+  Module Core                     :  0xe56565c208d0a8Ca28FB632aD7F6518f273B8B9f
+  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  Transferred ownerships to Modulecore
+  Modulecore configured in Config contract
+  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  New DS issued
+  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  LV Deposited
+  Liquidity Added to AMM
+  New DS issued
+  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  LV Deposited
+  Liquidity Added to AMM
+  New DS issued
+  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  Funder Contract                 :  0xdAD2E0651F88D5EA6725274153209Fe94DF8c829
+  Reader Contract                 :  0xC4736Ba3D54df3725771d889b964114535d4bF2D
+  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ```

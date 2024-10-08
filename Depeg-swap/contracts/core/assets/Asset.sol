@@ -1,9 +1,8 @@
-pragma solidity 0.8.24;
+pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20, ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-import {ERC20FlashMint} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20FlashMint.sol";
 import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import {IExpiry} from "../../interfaces/IExpiry.sol";
 import {IRates} from "../../interfaces/IRates.sol";
@@ -35,32 +34,38 @@ contract ExchangeRate is IRates {
  * @dev Used for adding Expiry functionality to contracts like DS
  */
 contract Expiry is IExpiry {
-    uint256 internal immutable TIMESTAMP;
+    uint256 internal immutable EXPIRY;
+    uint256 internal immutable ISSUED_AT;
 
     constructor(uint256 _expiry) {
         if (_expiry != 0 && _expiry < block.timestamp) {
             revert Expired();
         }
 
-        TIMESTAMP = _expiry;
+        EXPIRY = _expiry;
+        ISSUED_AT = block.timestamp;
     }
 
     /**
      * @notice returns if contract is expired or not(if timestamp==0 then contract not having any expiry)
      */
     function isExpired() external view virtual returns (bool) {
-        if (TIMESTAMP == 0) {
+        if (EXPIRY == 0) {
             return false;
         }
 
-        return block.timestamp >= TIMESTAMP;
+        return block.timestamp >= EXPIRY;
     }
 
     /**
      * @notice returns expiry timestamp of contract
      */
     function expiry() external view virtual returns (uint256) {
-        return TIMESTAMP;
+        return EXPIRY;
+    }
+
+    function issuedAt() external view virtual returns (uint256) {
+        return ISSUED_AT;
     }
 }
 
