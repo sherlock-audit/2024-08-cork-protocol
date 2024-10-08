@@ -1,0 +1,36 @@
+diff a/Depeg-swap/contracts/interfaces/ICommon.sol b/Depeg-swap/contracts/interfaces/ICommon.sol	(rejected hunks)
+@@ -1,4 +1,4 @@
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ import {Id} from "../libraries/Pair.sol";
+ 
+@@ -8,6 +8,9 @@ import {Id} from "../libraries/Pair.sol";
+  * @notice Common Interface which provides common errors, events and functions
+  */
+ interface ICommon {
++    /// @notice Zero Address error, thrown when passed address is 0
++    error ZeroAddress();
++
+     /// @notice only flash swap router is allowed to call this function
+     error OnlyFlashSwapRouterAllowed();
+ 
+@@ -30,6 +33,9 @@ interface ICommon {
+     /// @notice PSM Withdrawal is paused, i.e thrown when withdrawal is paused for PSM
+     error PSMWithdrawalPaused();
+ 
++    /// @notice PSM Repurchase is paused, i.e thrown when repurchase is paused for PSM
++    error PSMRepurchasePaused();
++
+     /// @notice LV Deposit is paused, i.e thrown when deposit is paused for LV
+     error LVDepositPaused();
+ 
+@@ -50,7 +56,7 @@ interface ICommon {
+     /// @param pa The address of the pegged asset
+     /// @param ra The address of the redemption asset
+     /// @param lv The address of the LV
+-    event Initialized(Id indexed id, address indexed pa, address indexed ra, address lv);
++    event InitializedModuleCore(Id indexed id, address indexed pa, address indexed ra, address lv);
+ 
+     /// @notice Emitted when a new DS is issued for a given PSM
+     /// @param Id The PSM id

@@ -1,0 +1,7 @@
+diff a/Depeg-swap/contracts/interfaces/uniswap-v2/RouterV2.sol b/Depeg-swap/contracts/interfaces/uniswap-v2/RouterV2.sol	(rejected hunks)
+@@ -1,4 +1,4 @@
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ import {IUniswapV2Router01} from "./RouterV1.sol";
+ 

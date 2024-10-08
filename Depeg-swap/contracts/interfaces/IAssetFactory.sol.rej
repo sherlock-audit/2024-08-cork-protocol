@@ -1,0 +1,14 @@
+diff a/Depeg-swap/contracts/interfaces/IAssetFactory.sol b/Depeg-swap/contracts/interfaces/IAssetFactory.sol	(rejected hunks)
+@@ -1,4 +1,4 @@
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ /**
+  * @title IAssetFactory Interface
+@@ -82,4 +82,6 @@ interface IAssetFactory {
+      * @return lv new LV contract address
+      */
+     function deployLv(address ra, address pa, address owner) external returns (address lv);
++
++    function getLv(address ra, address pa) external view returns (address);
+ }

@@ -1,0 +1,222 @@
+diff a/Depeg-swap/test/helper/TestHelper.ts b/Depeg-swap/test/helper/TestHelper.ts	(rejected hunks)
+@@ -13,16 +13,16 @@ import {
+   verifyTypedData,
+   WalletClient,
+ } from "viem";
+-import UNIV2FACTORY from "./ext-abi/uni-v2-factory.json";
+-import UNIV2ROUTER from "./ext-abi/uni-v2-router.json";
++import UNIV2FACTORY from "./ext-abi/hardhat/uni-v2-factory.json";
++import UNIV2ROUTER from "./ext-abi/hardhat/uni-v2-router.json";
+ import { ethers } from "ethers";
+ 
+ const DEVISOR = BigInt(1e18);
+-export const DEFAULT_BASE_REDEMPTION_PRECENTAGE = parseEther("5");
++export const DEFAULT_BASE_REDEMPTION_PERCENTAGE = parseEther("5");
+ 
+-export function calculatePrecentage(
++export function calculatePercentage(
+   number: bigint,
+-  percent: bigint = DEFAULT_BASE_REDEMPTION_PRECENTAGE
++  percent: bigint = DEFAULT_BASE_REDEMPTION_PERCENTAGE
+ ) {
+   return (number * DEVISOR * percent) / parseEther("100") / DEVISOR;
+ }
+@@ -140,9 +140,9 @@ export async function deployUniV2Factory(flashswap: Address) {
+ 
+   const hash = await defaultSigner.deployContract({
+     abi: UNIV2FACTORY.abi,
+-    bytecode: `0x${UNIV2FACTORY.bytecode}`,
++    bytecode: `0x${UNIV2FACTORY.evm.bytecode.object}`,
+     account: defaultSigner.account,
+-    args: [defaultSigner.account.address, flashswap],
++    args: [ethers.constants.AddressZero, flashswap],
+   });
+ 
+   const client = await hre.viem.getPublicClient();
+@@ -163,7 +163,7 @@ export async function deployUniV2Router(
+ 
+   const hash = await defaultSigner.deployContract({
+     abi: UNIV2ROUTER.abi,
+-    bytecode: `0x${UNIV2ROUTER.bytecode}`,
++    bytecode: `0x${UNIV2ROUTER.evm.bytecode.object}`,
+     account: defaultSigner.account,
+     args: [univ2Factory, weth, router],
+   });
+@@ -179,12 +179,17 @@ export async function deployUniV2Router(
+ export async function deployModuleCore(
+   swapAssetFactory: Address,
+   config: Address,
+-  basePsmRedemptionFee: bigint
+ ) {
+   const signers = await hre.viem.getWalletClients();
+   const { defaultSigner } = getSigners(signers);
+ 
+   const mathLib = await hre.viem.deployContract("MathHelper");
++  const psm = await hre.viem.deployContract("PsmLibrary", [], {
++    libraries: {
++      MathHelper: mathLib.address,
++    },
++  });
++
+   const vault = await hre.viem.deployContract("VaultLibrary", [], {
+     libraries: {
+       MathHelper: mathLib.address,
+@@ -202,31 +207,29 @@ export async function deployModuleCore(
+     dsFlashSwapRouter.contract.address
+   );
+ 
+-  const contract = await hre.viem.deployContract(
+-    "ModuleCore",
+-    [
+-      swapAssetFactory,
+-      univ2Factory,
+-      dsFlashSwapRouter.contract.address,
+-      univ2Router,
+-      config,
+-      basePsmRedemptionFee,
+-    ],
+-    {
+-      client: {
+-        wallet: defaultSigner,
+-      },
+-      libraries: {
+-        MathHelper: mathLib.address,
+-        VaultLibrary: vault.address,
+-      },
+-    }
+-  );
++  const contract = await hre.viem.deployContract("ModuleCore", [], {
++    client: {
++      wallet: defaultSigner,
++    },
++    libraries: {
++      VaultLibrary: vault.address,
++      PsmLibrary: psm.address,
++    },
++  });
+ 
+-  await dsFlashSwapRouter.contract.write.initialize([
+-    contract.address,
++  contract.write.initialize([
++    swapAssetFactory,
++    univ2Factory,
++    dsFlashSwapRouter.contract.address,
+     univ2Router,
++    config,
++  ]);
++
++  await dsFlashSwapRouter.contract.write.initialize([
++    dsFlashSwapRouter.contract.address,
+   ]);
++  await dsFlashSwapRouter.contract.write.setModuleCore([contract.address]);
++  // await dsFlashSwapRouter.contract.write.transferOwnership([contract.address]);
+ 
+   return {
+     contract,
+@@ -238,17 +241,20 @@ export async function deployModuleCore(
+ }
+ 
+ export type InitializeNewPsmArg = {
++  factory: Address;
+   moduleCore: Address;
+   config: Address;
+   pa: Address;
+   ra: Address;
+   lvFee: bigint;
+   initialDsPrice?: bigint;
++  rates: bigint;
+ };
+ 
+ export async function initializeNewPsmLv(arg: InitializeNewPsmArg) {
+   const signers = await hre.viem.getWalletClients();
+   const { defaultSigner } = getSigners(signers);
++  const factory = await hre.viem.getContractAt("AssetFactory", arg.factory);
+   const contract = await hre.viem.getContractAt("ModuleCore", arg.moduleCore);
+   const configContract = await hre.viem.getContractAt("CorkConfig", arg.config);
+   const dsPrice = arg.initialDsPrice ?? parseEther("0.1");
+@@ -257,15 +263,17 @@ export async function initializeNewPsmLv(arg: InitializeNewPsmArg) {
+     account: defaultSigner.account,
+   });
+ 
+-  await configContract.write.initializeModuleCore([arg.pa, arg.ra, arg.lvFee, dsPrice], {
+-    account: defaultSigner.account,
+-  });
+-
+-  const events = await contract.getEvents.Initialized({
++  await configContract.write.initializeModuleCore([
++    arg.pa,
++    arg.ra,
++    arg.lvFee,
++    dsPrice,
++    arg.rates
++  ]);
++  const events = await contract.getEvents.InitializedModuleCore({
+     pa: arg.pa,
+     ra: arg.ra,
+   });
+-
+   return {
+     lv: events[0].args.lv,
+     Id: events[0].args.id,
+@@ -293,7 +301,7 @@ export async function issueNewSwapAssets(arg: IssueNewSwapAssetsArg) {
+   const { defaultSigner } = getSigners(signers);
+ 
+   const rate = arg.rates ?? parseEther("1");
+-  // 10% by default
++  // 5% by default
+   const repurchaseFeePercent = arg.repurhcaseFeePrecent ?? parseEther("5");
+ 
+   const contract = await hre.viem.getContractAt("ModuleCore", arg.moduleCore);
+@@ -301,7 +309,15 @@ export async function issueNewSwapAssets(arg: IssueNewSwapAssetsArg) {
+ 
+   const configContract = await hre.viem.getContractAt("CorkConfig", arg.config);
+   await configContract.write.issueNewDs(
+-    [Id, BigInt(arg.expiry), rate, repurchaseFeePercent],
++    [
++      Id,
++      BigInt(arg.expiry),
++      rate,
++      repurchaseFeePercent,
++      parseEther("1"),
++      10n,
++      BigInt(expiry(1000000)),
++    ],
+     {
+       account: defaultSigner.account,
+     }
+@@ -465,10 +481,10 @@ export async function onlymoduleCoreWithFactory(basePsmRedemptionFee: bigint) {
+     await deployModuleCore(
+       factory.contract.address,
+       config.contract.address,
+-      basePsmRedemptionFee
+     );
+   const moduleCore = contract;
+-  await factory.contract.write.initialize([moduleCore.address]);
++  await factory.contract.write.initialize();
++  await factory.contract.write.transferOwnership([moduleCore.address]);
+ 
+   return {
+     factory,
+@@ -482,7 +498,7 @@ export async function onlymoduleCoreWithFactory(basePsmRedemptionFee: bigint) {
+ }
+ 
+ export async function ModuleCoreWithInitializedPsmLv(
+-  basePsmRedemptionFee: bigint = DEFAULT_BASE_REDEMPTION_PRECENTAGE
++  basePsmRedemptionFee: bigint = DEFAULT_BASE_REDEMPTION_PERCENTAGE
+ ) {
+   const {
+     factory,
+@@ -498,11 +514,13 @@ export async function ModuleCoreWithInitializedPsmLv(
+   const fee = parseEther("5");
+ 
+   const { Id, lv } = await initializeNewPsmLv({
++    factory: factory.contract.address,
+     moduleCore: moduleCore.address,
+     config: config.contract.address,
+     pa: pa.address,
+     ra: ra.address,
+     lvFee: fee,
++    rates: basePsmRedemptionFee,
+   });
+ 
+   return {

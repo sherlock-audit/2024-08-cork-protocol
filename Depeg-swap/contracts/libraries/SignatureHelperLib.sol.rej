@@ -1,0 +1,7 @@
+diff a/Depeg-swap/contracts/libraries/SignatureHelperLib.sol b/Depeg-swap/contracts/libraries/SignatureHelperLib.sol	(rejected hunks)
+@@ -1,4 +1,4 @@
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ /**
+  * @dev Signature structure    
