@@ -1,0 +1,8 @@
+diff a/Depeg-swap/contracts/dummy/DummyERC20WithMetadata.sol b/Depeg-swap/contracts/dummy/DummyERC20WithMetadata.sol	(rejected hunks)
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: UNLICENSED
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ import {ERC20, ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+ import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";

@@ -1,0 +1,7 @@
+diff a/Depeg-swap/contracts/libraries/MutexLock.sol b/Depeg-swap/contracts/libraries/MutexLock.sol	(rejected hunks)
+@@ -1,4 +1,4 @@
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ /**
+  * @title NoReentrant Library Contract

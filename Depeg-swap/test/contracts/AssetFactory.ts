@@ -42,7 +42,7 @@ describe("Asset Factory", function () {
     ) as Address;
     assetFactory = await loadFixture(deployFactory);
 
-    await assetFactory.write.initialize([defaultSigner.account.address], {
+    await assetFactory.write.initialize({
       account: defaultSigner.account,
     });
   });
@@ -55,7 +55,7 @@ describe("Asset Factory", function () {
   describe("initialize", function () {
     it("Revert initialize when Already initialized", async function () {
       await expect(
-        assetFactory.write.initialize([defaultSigner.account.address], {
+        assetFactory.write.initialize({
           account: defaultSigner.account,
         })
       ).to.be.rejectedWith(`InvalidInitialization`);
@@ -114,6 +114,31 @@ describe("Asset Factory", function () {
         expect(assets[0][i]).to.equal(await getCheckSummedAdrress(ra[i + 5]));
         expect(assets[1][i]).to.equal(lv[i + 5]);
       }
+    });
+
+    it("should return correct number of items as per query parameters and end length", async function () {
+      let lv: Address[] = [];
+      let ra: Address[] = [];
+      let pa: Address[] = [];
+      for (let i = 0; i < 10; i++) {
+        const backedAssets = await helper.backedAssets();
+        pa.push(backedAssets.pa.address);
+        ra.push(backedAssets.ra.address);
+        await assetFactory.write.deployLv([
+          ra[i],
+          pa[i],
+          defaultSigner.account.address,
+        ]);
+        const event = await assetFactory.getEvents
+          .LvAssetDeployed({
+            ra: ra[i]!,
+          })
+          .then((e) => e[0]);
+        lv.push(event.args.lv!);
+      }
+      const assets = await assetFactory.read.getDeployedAssets([3, 3]);
+      expect(assets[0].length).to.equal(1);
+      expect(assets[1].length).to.equal(1);
     });
 
     it("should correctly return empty array when queried more than current assets", async function () {
@@ -278,10 +303,48 @@ describe("Asset Factory", function () {
       }
     });
 
+    it("should return correct number of items as per query parameters and end length", async function () {
+      const { ra, pa } = await helper.backedAssets();
+      // deploy lv to signal that a pair exist
+      await assetFactory.write.deployLv([
+        ra.address,
+        pa.address,
+        defaultSigner.account.address,
+      ]);
+
+      let ct: Address[] = [];
+      let ds: Address[] = [];
+      for (let i = 0; i < 10; i++) {
+        await assetFactory.write.deploySwapAssets([
+          ra.address,
+          pa.address,
+          defaultSigner.account.address,
+          BigInt(helper.expiry(100000)),
+          parseEther("1"),
+        ]);
+        const event = await assetFactory.getEvents
+          .AssetDeployed({
+            ra: ra.address!,
+          })
+          .then((e) => e[0]);
+        ct.push(event.args.ct!);
+        ds.push(event.args.ds!);
+      }
+      const assets = await assetFactory.read.getDeployedSwapAssets([
+        ra.address,
+        pa.address,
+        3,
+        3,
+      ]);
+      expect(assets[0].length).to.equal(1);
+      expect(assets[1].length).to.equal(1);
+    });
+
     it("should correctly return empty array when queried more than current assets", async function () {
       const { ra, pa } = await helper.backedAssets();
       const assets = await assetFactory.read.getDeployedSwapAssets([
-        ra.address,pa.address,
+        ra.address,
+        pa.address,
         7,
         10,
       ]);
@@ -292,7 +355,7 @@ describe("Asset Factory", function () {
     it("Revert getDeployedSwapAssets when passed limit is more than max allowed value", async function () {
       const { ra, pa } = await helper.backedAssets();
       await expect(
-        assetFactory.read.getDeployedSwapAssets([ra.address,pa.address, 1, 11])
+        assetFactory.read.getDeployedSwapAssets([ra.address, pa.address, 1, 11])
       ).to.be.rejectedWith(`LimitTooLong(10, 11)`);
     });
   });

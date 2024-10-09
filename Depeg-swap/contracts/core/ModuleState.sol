@@ -1,4 +1,4 @@
-pragma solidity 0.8.24;
+pragma solidity ^0.8.24;
 
 import {Id} from "../libraries/Pair.sol";
 import {State} from "../libraries/State.sol";
@@ -18,19 +18,17 @@ abstract contract ModuleState is ICommon {
     using PsmLibrary for State;
 
     mapping(Id => State) internal states;
-    address internal immutable SWAP_ASSET_FACTORY;
+    address internal SWAP_ASSET_FACTORY;
 
     /// @dev in this case is uni v2
-    address internal immutable AMM_FACTORY;
+    address internal AMM_FACTORY;
 
-    address internal immutable DS_FLASHSWAP_ROUTER;
+    address internal DS_FLASHSWAP_ROUTER;
 
     /// @dev in this case is uni v2
-    address internal immutable AMM_ROUTER;
+    address internal AMM_ROUTER;
 
-    address internal immutable CONFIG;
-
-    uint256 internal psmBaseRedemptionFeePrecentage;
+    address internal CONFIG;
 
     /**
      * @dev checks if caller is config contract or not
@@ -46,23 +44,18 @@ abstract contract ModuleState is ICommon {
         return SWAP_ASSET_FACTORY;
     }
 
-    constructor(
+    function initializeModuleState(
         address _swapAssetFactory,
         address _ammFactory,
         address _dsFlashSwapRouter,
         address _ammRouter,
-        address _config,
-        uint256 _psmBaseRedemptionFeePrecentage
-    ) {
-        if (psmBaseRedemptionFeePrecentage > 5 ether) {
-            revert InvalidFees();
-        }
+        address _config
+    ) internal {
         SWAP_ASSET_FACTORY = _swapAssetFactory;
         AMM_FACTORY = _ammFactory;
         DS_FLASHSWAP_ROUTER = _dsFlashSwapRouter;
         AMM_ROUTER = _ammRouter;
         CONFIG = _config;
-        psmBaseRedemptionFeePrecentage = _psmBaseRedemptionFeePrecentage;
     }
 
     function getRouterCore() internal view returns (RouterState) {
@@ -105,8 +98,15 @@ abstract contract ModuleState is ICommon {
         _;
     }
 
+    modifier PSMRepurchaseNotPaused(Id id) {
+        if (states[id].psm.isRepurchasePaused) {
+            revert PSMRepurchasePaused();
+        }
+        _;
+    }
+
     modifier LVDepositNotPaused(Id id) {
-        if (states[id].vault.config.isWithdrawalPaused) {
+        if (states[id].vault.config.isDepositPaused) {
             revert LVDepositPaused();
         }
         _;

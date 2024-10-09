@@ -1,0 +1,7 @@
+diff a/Depeg-swap/contracts/interfaces/IRates.sol b/Depeg-swap/contracts/interfaces/IRates.sol	(rejected hunks)
+@@ -1,4 +1,4 @@
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ /**
+  * @title IRates Interface

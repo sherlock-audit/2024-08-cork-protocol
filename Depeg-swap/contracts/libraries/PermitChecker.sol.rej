@@ -1,0 +1,7 @@
+diff a/Depeg-swap/contracts/libraries/PermitChecker.sol b/Depeg-swap/contracts/libraries/PermitChecker.sol	(rejected hunks)
+@@ -1,4 +1,4 @@
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
+ 

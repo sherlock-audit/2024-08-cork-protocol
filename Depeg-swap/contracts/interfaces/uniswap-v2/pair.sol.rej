@@ -1,0 +1,8 @@
+diff a/Depeg-swap/contracts/interfaces/uniswap-v2/pair.sol b/Depeg-swap/contracts/interfaces/uniswap-v2/pair.sol	(rejected hunks)
+@@ -1,5 +1,5 @@
+ // taken directly from forked repo
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ interface IUniswapV2Pair {
+     event Approval(address indexed owner, address indexed spender, uint256 value);

@@ -1,0 +1,7 @@
+diff a/Depeg-swap/contracts/libraries/UQ112x112.sol b/Depeg-swap/contracts/libraries/UQ112x112.sol	(rejected hunks)
+@@ -1,4 +1,4 @@
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ /**
+  * @title UQ112x112 Library Contract

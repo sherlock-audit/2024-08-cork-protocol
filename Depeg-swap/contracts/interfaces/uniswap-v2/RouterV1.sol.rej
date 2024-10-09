@@ -1,0 +1,7 @@
+diff a/Depeg-swap/contracts/interfaces/uniswap-v2/RouterV1.sol b/Depeg-swap/contracts/interfaces/uniswap-v2/RouterV1.sol	(rejected hunks)
+@@ -1,4 +1,4 @@
+-pragma solidity 0.8.24;
++pragma solidity ^0.8.24;
+ 
+ interface IUniswapV2Router01 {
+     function factory() external pure returns (address);
